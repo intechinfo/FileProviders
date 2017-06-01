@@ -17,9 +17,9 @@ namespace Intech.FileProviders.GitFileProvider
         readonly bool _exist;
         readonly Dictionary<string, GITKEYWORD> _keywordDictionary;
         const string INVALID_PATH = "Invalid path";
-        const string INVALID_BRANCH = "The branch don't exist in the repository";
-        const string INVALID_TAG = "The tag don't exist in the repository";
-        const string INVALID_COMMIT = "The commit don't exist in the repository";
+        const string INVALID_BRANCH = "The branch doesn't exist in the repository";
+        const string INVALID_TAG = "The tag doesn't exist in the repository";
+        const string INVALID_COMMIT = "The commit doesn't exist in the repository";
         const string INVALID_REPOSITORY = "The Repository doesn't exist";
         const string INVALID_HEAD = "The repository doesn't contain head";
         const string INVALID_COMMAND = "The command doesn't exist";
@@ -324,9 +324,9 @@ namespace Intech.FileProviders.GitFileProvider
         private string GetRelativePath(string[] splitPath, int index = 2)
         {
             string RelativePath = "";
-            if (splitPath.Length == index) return RelativePath;
             for (int i = index; i < splitPath.Length; i++)
                 RelativePath += splitPath[i] + Path.DirectorySeparatorChar;
+            if (RelativePath == "") return RelativePath;
             return RelativePath.Substring(0, RelativePath.Length - 1).Trim();
         }
 
