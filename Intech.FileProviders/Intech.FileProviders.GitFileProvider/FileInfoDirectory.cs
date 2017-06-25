@@ -10,14 +10,13 @@ namespace Intech.FileProviders.GitFileProvider
         string _physicalPath;
         string _name;
 
-        public FileInfoDirectory(bool exists, string physicalPath, string name)
+        public FileInfoDirectory(string physicalPath, string name)
         {
-            _exists = exists;
             _physicalPath = physicalPath;
             _name = name;
         }
 
-        public bool Exists => _exists;
+        public bool Exists => true;
 
         public long Length => -1;
 

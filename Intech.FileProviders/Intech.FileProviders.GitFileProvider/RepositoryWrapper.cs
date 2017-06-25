@@ -5,22 +5,42 @@ namespace Intech.FileProviders.GitFileProvider
 {
     internal class RepositoryWrapper : IDisposable
     {
+        readonly string _path;
+
         internal Repository Repo { get; private set; }
         internal int StreamWrapperCount { get; set; }
 
-        public void Dispose()
+        public RepositoryWrapper(string rootPath)
         {
-            if (StreamWrapperCount == 0)
+            _path = rootPath;
+            Repo = new Repository(rootPath);
+        }
+
+        public RepositoryWrapper Open()
+        {
+            // This is the lock because we are totally private.
+            lock (this)
             {
-                Repo.Dispose();
-                Repo = null;
+                if (++StreamWrapperCount == 1)
+                {
+                    Repo = new Repository(_path);
+                }
+                return this;
             }
         }
 
-        public RepositoryWrapper(string rootPath)
+        public void Close()
         {
-            if (Repo == null)
-                Repo = new Repository(rootPath);
+            lock (this)
+            {
+                if (--StreamWrapperCount == 0)
+                {
+                    Repo.Dispose();
+                    Repo = null;
+                }
+            }
         }
+
+        void IDisposable.Dispose() => Close();
     }
 }

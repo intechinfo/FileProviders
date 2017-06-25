@@ -116,9 +116,10 @@ namespace Intech.FileProviders.GitFileProvider.Tests
             IFileInfo fileInBranch = git.GetFileInfo(@"head\Intech.FileProviders\Intech.FileProviders.GitFileProvider\GitFileProvider.cs");
 
             fileInBranch.Exists.Should().BeTrue();
+            fileInBranch.PhysicalPath.Should().Be(@"head\Intech.FileProviders\Intech.FileProviders.GitFileProvider\GitFileProvider.cs");
             fileInBranch.Name.Should().Be("GitFileProvider.cs");
             fileInBranch.Length.Should().BeGreaterThan(-1);
-            fileInBranch.LastModified.Should().BeAfter(default(DateTimeOffset));
+            fileInBranch.LastModified.Should().Be(DateTimeOffset.MinValue);
         }
 
         [Test]
@@ -149,6 +150,7 @@ namespace Intech.FileProviders.GitFileProvider.Tests
             IFileInfo branchesFile = git.GetFileInfo(@"branches\origin/dev-Guillaume\Intech.FileProviders\Intech.FileProviders.GitFileProvider");
 
             branchesFile.Exists.Should().BeTrue();
+            branchesFile.PhysicalPath.Should().Be(@"branches\origin/dev-Guillaume\Intech.FileProviders\Intech.FileProviders.GitFileProvider");
             branchesFile.IsDirectory.Should().BeTrue();
         }
 
@@ -182,9 +184,9 @@ namespace Intech.FileProviders.GitFileProvider.Tests
 
             fileInBranch.Exists.Should().BeTrue();
             fileInBranch.Name.Should().Be("GitFileProvider.cs");
-            fileInBranch.PhysicalPath.Should().Be(@"Intech.FileProviders\Intech.FileProviders.GitFileProvider\GitFileProvider.cs");
+            fileInBranch.PhysicalPath.Should().Be(@"branches\origin/dev-Guillaume\Intech.FileProviders\Intech.FileProviders.GitFileProvider\GitFileProvider.cs");
             fileInBranch.Length.Should().BeGreaterThan(-1);
-            fileInBranch.LastModified.Should().BeAfter(default(DateTimeOffset));
+            fileInBranch.LastModified.Should().Be(DateTimeOffset.MinValue);
         }
 
         [Test]
@@ -217,7 +219,7 @@ namespace Intech.FileProviders.GitFileProvider.Tests
             GitFileProvider git = new GitFileProvider(ProjectRootPath);
             IFileInfo fileInfo = git.GetFileInfo(@"commits\24c1e7f2a9ed9ca14f107fd295c91da0a592e95a\LICENSE");
             fileInfo.Name.Should().Be("LICENSE");
-            fileInfo.PhysicalPath.Should().Be(@"LICENSE");
+            fileInfo.PhysicalPath.Should().Be(@"commits\24c1e7f2a9ed9ca14f107fd295c91da0a592e95a\LICENSE");
             fileInfo.Length.Should().BeGreaterOrEqualTo(0);
         }
 
@@ -226,8 +228,8 @@ namespace Intech.FileProviders.GitFileProvider.Tests
         {
             GitFileProvider git = new GitFileProvider(ProjectRootPath);
             IFileInfo fileInfo = git.GetFileInfo(@"tags\FirstCommit\LICENSE");
-            fileInfo.PhysicalPath.Should().Be(@"LICENSE");
-            fileInfo.Name.Should().Be("LICENSE");
+            fileInfo.PhysicalPath.Should().Be(@"tags\FirstCommit\LICENSE");
+            fileInfo.Name.Should().Be(@"LICENSE");
             fileInfo.Length.Should().BeGreaterOrEqualTo(0);
         }
 
@@ -254,43 +256,16 @@ namespace Intech.FileProviders.GitFileProvider.Tests
         {
             GitFileProvider git = new GitFileProvider(ProjectRootPath);
             IFileInfo fileInBranchMPT = git.GetFileInfo(@"branches\origin/dev-Guillaume\Intech.FileProviders\Intech.FileProviders.GitFileProvider\GitFileProvider.cs");
-            Stream stream1 = fileInBranchMPT.CreateReadStream();
-
-            byte[] buffer1 = new byte[1024];
-            stream1.Read(buffer1, 0, 1024);
-
-
             IFileInfo fileInBranchGuillaume = git.GetFileInfo(@"branches\origin/dev-Guillaume\Intech.FileProviders\Intech.FileProviders.GitFileProvider\DirectoryInfo.cs");
-            Stream stream2 = fileInBranchGuillaume.CreateReadStream();
-            byte[] buffer2 = new byte[1024];
-            stream2.Read(buffer2, 0, 1024);
-            buffer1.Should().NotBeEquivalentTo(buffer2);
-            stream1.Dispose();
-            stream2.Dispose();
-            buffer1 = null;
-            buffer2 = null;
-        }
-
-        [Test]
-        public void FileInfo_Read_Same_File_In_Commit_Or_Tag_Should_Be_Equal()
-        {
-            GitFileProvider git = new GitFileProvider(ProjectRootPath);
-            IFileInfo fileInCommit = git.GetFileInfo(@"commits\9b3bd5db5082c0d4cc41b1a480df897c049ac70b\Intech.FileProviders\Intech.FileProviders.GitFileProvider\GitFileProvider.cs");
-            Stream stream1 = fileInCommit.CreateReadStream();
-
-            byte[] buffer1 = new byte[1024];
-            stream1.Read(buffer1, 0, 1024);
-
-
-            IFileInfo fileInTags = git.GetFileInfo(@"tags\FirstCommit\Intech.FileProviders\Intech.FileProviders.GitFileProvider\GitFileProvider.cs");
-            Stream stream2 = fileInTags.CreateReadStream();
-            byte[] buffer2 = new byte[1024];
-            stream2.Read(buffer2, 0, 1024);
-            buffer1.Should().BeEquivalentTo(buffer2);
-            stream1.Dispose();
-            stream2.Dispose();
-            buffer1 = null;
-            buffer2 = null;
+            using (Stream stream1 = fileInBranchMPT.CreateReadStream())
+            using (Stream stream2 = fileInBranchGuillaume.CreateReadStream())
+            {
+                byte[] buffer1 = new byte[1024];
+                stream1.Read(buffer1, 0, 1024);
+                byte[] buffer2 = new byte[1024];
+                stream2.Read(buffer2, 0, 1024);
+                buffer1.Should().NotBeEquivalentTo(buffer2);
+            }
         }
 
         [Test]

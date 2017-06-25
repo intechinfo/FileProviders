@@ -23,7 +23,7 @@ namespace Intech.FileProviders.GitFileProvider
 
         public string Name => _name;
 
-        public DateTimeOffset LastModified => default(DateTimeOffset);
+        public DateTimeOffset LastModified => DateTimeOffset.MinValue;
 
         public bool IsDirectory => true;
 

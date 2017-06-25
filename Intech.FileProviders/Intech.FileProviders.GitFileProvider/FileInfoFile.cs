@@ -7,28 +7,19 @@ namespace Intech.FileProviders.GitFileProvider
 {
     internal class FileInfoFile : IFileInfo
     {
-        bool _exists;
-        long _length;
-        string _physicalPath;
-        string _name;
-        DateTimeOffset _lastModified;
-        ReadStreamDecorator _readStreamDeco;
-        Blob _file;
-        public FileInfoFile(bool exists, string physicalPath, string name, DateTimeOffset lastModified, Blob file, RepositoryWrapper rw = null)
+        readonly GitFileProvider _gfp;
+        readonly long _length;
+        readonly string _physicalPath;
+        readonly string _name;
+        public FileInfoFile(GitFileProvider gfp, string physicalPath, string name, long length)
         {
-            _exists = exists;
+            _gfp = gfp;
             _physicalPath = physicalPath;
             _name = name;
-            _lastModified = lastModified;
-            _file = file;
-            if (file != null)
-            {
-                _length = file.Size;
-                _readStreamDeco = new ReadStreamDecorator(file.GetContentStream(), rw);
-            }
+            _length = length;
         }
 
-        public bool Exists => _exists;
+        public bool Exists => true;
 
         public long Length => _length;
 
@@ -36,17 +27,13 @@ namespace Intech.FileProviders.GitFileProvider
 
         public string Name => _name;
 
-        public DateTimeOffset LastModified => _lastModified;
+        public DateTimeOffset LastModified => DateTimeOffset.MinValue;
 
         public bool IsDirectory => false;
 
-        public Blob File => _file;
-
         public Stream CreateReadStream()
         {
-            if (_readStreamDeco != null)
-                return _readStreamDeco;
-            return null;
+            return _gfp.GetFileContent(PhysicalPath);
         }
     }
 }

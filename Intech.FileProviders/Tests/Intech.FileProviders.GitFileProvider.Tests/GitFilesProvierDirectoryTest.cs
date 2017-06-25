@@ -53,7 +53,7 @@ namespace Intech.FileProviders.GitFileProvider.Tests
             foreach (var item in rootDir)
             {
                 item.Exists.Should().BeTrue();
-                item.PhysicalPath.Should().Be(@"Intech.FileProviders\Intech.FileProviders.GitFileProvider\" + item.Name);
+                item.PhysicalPath.Should().Be(@"branches\dev-Guillaume\Intech.FileProviders\Intech.FileProviders.GitFileProvider" + Path.DirectorySeparatorChar + item.Name);
             }
         }
         [Test]
@@ -73,7 +73,7 @@ namespace Intech.FileProviders.GitFileProvider.Tests
             foreach (var item in headDir)
             {
                 item.Exists.Should().BeTrue();
-                item.PhysicalPath.Should().Be(@"Intech.FileProviders\Intech.FileProviders.GitFileProvider" + Path.DirectorySeparatorChar + item.Name);
+                item.PhysicalPath.Should().Be(@"head\Intech.FileProviders\Intech.FileProviders.GitFileProvider" + Path.DirectorySeparatorChar + item.Name);
             }
         }
         [Test]
@@ -92,7 +92,7 @@ namespace Intech.FileProviders.GitFileProvider.Tests
             foreach (var item in rootDir)
             {
                 item.Exists.Should().BeTrue();
-                item.PhysicalPath.Should().Be(@"Intech.FileProviders\Intech.FileProviders.GitFileProvider\" + item.Name);
+                item.PhysicalPath.Should().Be(@"commits\9b3bd5db5082c0d4cc41b1a480df897c049ac70b\Intech.FileProviders\Intech.FileProviders.GitFileProvider\" + item.Name);
 
             }
         }
@@ -112,7 +112,7 @@ namespace Intech.FileProviders.GitFileProvider.Tests
             foreach (var item in rootDir)
             {
                 item.Exists.Should().BeTrue();
-                item.PhysicalPath.Should().Be(@"Intech.FileProviders\Intech.FileProviders.GitFileProvider\" + item.Name);
+                item.PhysicalPath.Should().Be(@"tags\FirstCommit\Intech.FileProviders\Intech.FileProviders.GitFileProvider\" + item.Name);
 
             }
         }
